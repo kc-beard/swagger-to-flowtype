@@ -27,20 +27,36 @@ const definitionTypeName = (ref): string => {
 
 const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
 
+const camel = (str: string) =>
+  str.replace(/_([a-z])/g, (g: string) => g[1].toUpperCase());
+
 const typeFor = (property: any): string => {
+  let type = "";
   if (property.type === "array") {
     if ("$ref" in property.items) {
-      return `Array<${definitionTypeName(property.items.$ref)}>`;
+      type = `Array<${definitionTypeName(property.items.$ref)}>`;
+    } else if (property.items.type === "object") {
+      const child = propertiesTemplate(propertiesList(property.items)).replace(
+        /"/g,
+        ""
+      );
+      type = `Array<${child}>`;
+    } else {
+      type = `Array<${typeMapping[property.items.type]}>`;
     }
-    else if (property.items.type === 'object') {
-      const child = propertiesTemplate(propertiesList(property.items)).replace(/"/g, "");
-      return `Array<${child}>`;
-    }
-    return `Array<${typeMapping[property.items.type]}>`;
   } else if (property.type === "string" && "enum" in property) {
-    return property.enum.map(e => `'${e}'`).join(" | ");
+    type = property.enum.map(e => `'${e}'`).join(" | ");
+  } else if (typeMapping[property.type]) {
+    type = typeMapping[property.type]
+  } else if (property.$ref) {
+    type = definitionTypeName(property.$ref);
+  } else if (property && property.allOf && property.allOf[0] && property.allOf[0].$ref) {
+    type = definitionTypeName(property.allOf[0].$ref);
+  } else {
+    type = "any";
   }
-  return typeMapping[property.type] || definitionTypeName(property.$ref);
+
+  return program.checkNullable && property["x-nullable"] ? `?${type}` : type;
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
@@ -100,11 +116,11 @@ const withExact = (property: string): string => {
 };
 
 const propertiesTemplate = (properties: Object | Array<Object> | string): string => {
+  let template;
   if (typeof properties === "string") {
-    return properties;
-  }
-  if (Array.isArray(properties)) {
-    return properties
+    template = properties;
+  } else if (Array.isArray(properties)) {
+    template = properties
       .map(property => {
         let p = property.$ref ? `& ${property.$ref}` : JSON.stringify(property);
         if (!property.$ref && program.exact) {
@@ -114,11 +130,13 @@ const propertiesTemplate = (properties: Object | Array<Object> | string): string
       })
       .sort(a => (a[0] === "&" ? 1 : -1))
       .join(" ");
+  } else if (program.exact) {
+    template = withExact(JSON.stringify(properties));
+  } else {
+    template = JSON.stringify(properties);
   }
-  if (program.exact) {
-    return withExact(JSON.stringify(properties));
-  }
-  return JSON.stringify(properties);
+
+  return program.camelCase ? camel(template) : template;
 };
 
 const generate = (swagger: Object) => {
@@ -134,6 +152,7 @@ const generate = (swagger: Object) => {
       const s = `export type ${definition.title} = ${propertiesTemplate(
         definition.properties
       ).replace(/"/g, "")};`;
+
       return s;
     })
     .join(" ");
@@ -173,6 +192,8 @@ program
   .arguments("<file>")
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
+  .option("-cn --check-nullable", "Add question mark to nullable types")
+  .option("-cc --camel-case", "Convert underscore syntax to camelCase")
   .option("-e --exact", "Add exact types")
   .action(file => {
     try {
