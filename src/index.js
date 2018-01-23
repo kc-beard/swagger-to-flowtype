@@ -25,6 +25,10 @@ const definitionTypeName = (ref): string => {
   return found ? found[1] : "";
 };
 
+// app.pharmacy.serializers.PharmacySchema => Pharmacy
+const cleanPrefix = (str: string) =>
+  str.replace(/(app.*serializers\.|Schema)/g, "");
+
 const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
 
 const camel = (str: string) =>
@@ -53,10 +57,12 @@ const typeFor = (property: any): string => {
   } else if (property && property.allOf && property.allOf[0] && property.allOf[0].$ref) {
     type = definitionTypeName(property.allOf[0].$ref);
   } else {
-    type = "any";
+    type = "*";
   }
 
-  return program.checkNullable && property["x-nullable"] ? `?${type}` : type;
+  if (program.checkNullable && property["x-nullable"]) type = `?${type}`;
+
+  return cleanPrefix(type);
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
@@ -149,9 +155,9 @@ const generate = (swagger: Object) => {
       return arr;
     }, [])
     .map(definition => {
-      const s = `export type ${definition.title} = ${propertiesTemplate(
-        definition.properties
-      ).replace(/"/g, "")};`;
+      const s = `export type ${cleanPrefix(
+        definition.title
+      )} = ${propertiesTemplate(definition.properties).replace(/"/g, "")};`;
 
       return s;
     })
@@ -168,7 +174,7 @@ export const generator = (file: string) => {
     doc = JSON.parse(fs.readFileSync(file, "utf8"));
   }
   const options = {};
-  const result = `// @flow\n${generate(doc)}`;
+  const result = `${generate(doc)}`;
   return prettier.format(result, options);
 };
 
