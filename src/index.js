@@ -20,7 +20,7 @@ const typeMapping = {
 };
 
 const definitionTypeName = (ref): string => {
-  const re = /#\/definitions\/(.*)/;
+  const re = /#\/components\/schemas\/(.*)/;
   const found = ref.match(re);
   return found ? found[1] : "";
 };
@@ -146,11 +146,11 @@ const propertiesTemplate = (properties: Object | Array<Object> | string): string
 };
 
 const generate = (swagger: Object) => {
-  const g = Object.keys(swagger.definitions)
+  const g = Object.keys(swagger.components.schemas)
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
         title: stripBrackets(definitionName),
-        properties: propertiesList(swagger.definitions[definitionName])
+        properties: propertiesList(swagger.components.schemas[definitionName])
       });
       return arr;
     }, [])
@@ -173,8 +173,11 @@ export const generator = (file: string) => {
   } else {
     doc = JSON.parse(fs.readFileSync(file, "utf8"));
   }
-  const options = {};
-  const result = `${generate(doc)}`;
+  const options = {
+      parser: 'flow'
+  };
+  const genDoc = generate(doc);
+  const result = `// @flow\n${genDoc}`;
   return prettier.format(result, options);
 };
 

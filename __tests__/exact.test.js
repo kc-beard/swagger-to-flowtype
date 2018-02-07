@@ -13,23 +13,25 @@ jest.mock("commander", () => ({
 describe("generate flow types", () => {
   describe("with --exact", () => {
     it("should generate expected flow types", () => {
-      const file = path.join(__dirname, "__mocks__/swagger.yaml");
+      const file = path.join(__dirname, "__mocks__/swagger-v2.yaml");
       const expected = path.join(
         __dirname,
         "__mocks__/exact/expected.yaml.flow.js"
       );
       const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
+      const output = generator(file);
+      expect(output).toEqual(expectedString);
     });
 
-    it("should generate expected flow types from swagger.json", () => {
-      const file = path.join(__dirname, "__mocks__/swagger.json");
+    it("should generate expected flow types from swagger-v2.json", () => {
+      const file = path.join(__dirname, "__mocks__/swagger-v2.json");
       const expected = path.join(
         __dirname,
         "__mocks__/exact/expected.json.flow.js"
       );
       const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
+      const output = generator(file);
+      expect(output).toEqual(expectedString);
     });
   });
 });

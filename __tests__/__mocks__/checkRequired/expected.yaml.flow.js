@@ -27,6 +27,6 @@ export type Pet = {
   tags?: Array<Tag>,
   status?: "available" | "pending" | "sold"
 };
-export type IGenericCollectionPet = { items?: Array<Pet> };
-export type IGenericCollectionString = { items?: Array<string> };
 export type ApiResponse = { code?: number, type?: string, message?: string };
+export type IGenericCollection_Pet_ = { items?: Array<Pet> };
+export type IGenericCollection_String_ = { items?: Array<string> };

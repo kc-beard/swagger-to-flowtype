@@ -15,10 +15,11 @@ jest.mock('commander', () => {
 describe("generate flow types", () => {
   describe("parse enum on root element", () => {
     it("should generate expected flow types", () => {
-      const file = path.join(__dirname, "__mocks__/enumOnRoot.swagger.yaml");
+      const file = path.join(__dirname, "__mocks__/enumOnRoot.swagger-v2.yaml");
       const expected = path.join(__dirname, "__mocks__/enumOnRoot.flow.js");
       const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
+      const output = generator(file);
+      expect(output).toEqual(expectedString);
     });
   });
 });
