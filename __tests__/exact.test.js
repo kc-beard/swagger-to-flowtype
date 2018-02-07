@@ -16,7 +16,7 @@ describe("generate flow types", () => {
       const file = path.join(__dirname, "__mocks__/swagger-v2.yaml");
       const expected = path.join(
         __dirname,
-        "__mocks__/exact/expected.yaml.flow.js"
+        "__mocks__/exact/expected-v2.yaml.flow.js"
       );
       const expectedString = fs.readFileSync(expected, "utf8");
       const output = generator(file);
@@ -27,7 +27,7 @@ describe("generate flow types", () => {
       const file = path.join(__dirname, "__mocks__/swagger-v2.json");
       const expected = path.join(
         __dirname,
-        "__mocks__/exact/expected.json.flow.js"
+        "__mocks__/exact/expected-v2.json.flow.js"
       );
       const expectedString = fs.readFileSync(expected, "utf8");
       const output = generator(file);
