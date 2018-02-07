@@ -10,14 +10,14 @@ jest.mock("commander", () => ({
 
 describe("generate flow types", () => {
   describe("Open API V2: with --check-required from swagger.yaml", () => {
-    it.skip("should generate expected flow types", () =>
+    it("should generate expected flow types", () =>
       assertMatchesExpected(
         "checkRequired/swagger.yaml",
         "checkRequired/expected.yaml.flow.js"
       )
     );
 
-    it.skip("should generate expected flow types from swagger.json", () =>
+    it("should generate expected flow types from swagger.json", () =>
       assertMatchesExpected(
         "checkRequired/swagger.json",
         "checkRequired/expected.json.flow.js"

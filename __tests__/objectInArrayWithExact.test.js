@@ -13,7 +13,7 @@ jest.mock("commander", () => {
 
 describe("generate flow types", () => {
   describe("Open API V2: parse objct in array", () => {
-    it.skip("should generate expected flow types", () =>
+    it("should generate expected flow types", () =>
       assertMatchesExpected(
         "objectInArray/objectInArray.swagger.yaml",
         "objectInArray/objectInArrayWithExact.flow.js"

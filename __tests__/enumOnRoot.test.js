@@ -10,9 +10,9 @@ jest.mock("commander", () => ({
 
 describe("generate flow types", () => {
   describe("Open API V2: parse enum on root element", () => {
-    it.skip("should generate expected flow types", () =>
+    it("should generate expected flow types", () =>
       assertMatchesExpected(
-        "enumOnRoot/enumOnRoot.swagger-v2.yaml",
+        "enumOnRoot/enumOnRoot.swagger.yaml",
         "enumOnRoot/enumOnRoot.flow.js"
       )
     );

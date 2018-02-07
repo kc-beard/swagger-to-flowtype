@@ -11,17 +11,17 @@ jest.mock("commander", () => ({
 
 describe("generate flow types", () => {
   describe("Open API V2: without --check-required", () => {
-    it.skip("should generate expected flow types from swagger.yaml", () =>
+    it("should generate expected flow types from swagger.yaml", () =>
       assertMatchesExpected(
-        "swagger.yaml",
-        "expected.yaml.flow.js"
+        "indexMocks/swagger.yaml",
+        "indexMocks/expected.yaml.flow.js"
       )
     );
 
-    it.skip("should generate expected flow types from swagger.json", () =>
+    it("should generate expected flow types from swagger.json", () =>
       assertMatchesExpected(
-        "swagger.json",
-        "expected.json.flow.js"
+        "indexMocks/swagger.json",
+        "indexMocks/expected.json.flow.js"
       )
     );
   });
@@ -29,14 +29,14 @@ describe("generate flow types", () => {
   describe("Open API V3: without --check-required", () => {
     it("should generate expected flow types from swagger-v2.yaml", () =>
       assertMatchesExpected(
-        "swagger-v2.yaml",
-        "expected-v2.yaml.flow.js"
+        "indexMocks/swagger-v2.yaml",
+        "indexMocks/expected-v2.yaml.flow.js"
       ));
 
     it("should generate expected flow types from swagger-v2.json", () =>
       assertMatchesExpected(
-        "swagger-v2.json",
-        "expected-v2.json.flow.js"
+        "indexMocks/swagger-v2.json",
+        "indexMocks/expected-v2.json.flow.js"
       ));
   });
 });

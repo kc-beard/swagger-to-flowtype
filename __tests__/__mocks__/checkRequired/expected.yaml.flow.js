@@ -30,4 +30,3 @@ export type Pet = {
 export type IGenericCollectionPet = { items?: Array<Pet> };
 export type IGenericCollectionString = { items?: Array<string> };
 export type ApiResponse = { code?: number, type?: string, message?: string };
-

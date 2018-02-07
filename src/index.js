@@ -20,9 +20,18 @@ const typeMapping = {
 };
 
 const definitionTypeName = (ref): string => {
-  const re = /#\/components\/schemas\/(.*)/;
-  const found = ref.match(re);
-  return found ? found[1] : "";
+  let re = /#\/components\/schemas\/(.*)/;
+  let found = ref.match(re);
+  if (found) {
+    return found[1];
+  }
+
+  re = /#\/definitions\/(.*)/;
+  found = ref.match(re);
+  if (found) {
+    return found[1];
+  }
+  return "";
 };
 
 // app.pharmacy.serializers.PharmacySchema => Pharmacy
@@ -51,10 +60,15 @@ const typeFor = (property: any): string => {
   } else if (property.type === "string" && "enum" in property) {
     type = property.enum.map(e => `'${e}'`).join(" | ");
   } else if (typeMapping[property.type]) {
-    type = typeMapping[property.type]
+    type = typeMapping[property.type];
   } else if (property.$ref) {
     type = definitionTypeName(property.$ref);
-  } else if (property && property.allOf && property.allOf[0] && property.allOf[0].$ref) {
+  } else if (
+    property &&
+    property.allOf &&
+    property.allOf[0] &&
+    property.allOf[0].$ref
+  ) {
     type = definitionTypeName(property.allOf[0].$ref);
   } else {
     type = "*";
@@ -121,7 +135,9 @@ const withExact = (property: string): string => {
   return result;
 };
 
-const propertiesTemplate = (properties: Object | Array<Object> | string): string => {
+const propertiesTemplate = (
+  properties: Object | Array<Object> | string
+): string => {
   let template;
   if (typeof properties === "string") {
     template = properties;
@@ -146,11 +162,15 @@ const propertiesTemplate = (properties: Object | Array<Object> | string): string
 };
 
 const generate = (swagger: Object) => {
-  const g = Object.keys(swagger.components.schemas)
+  const schemas =
+    swagger.components && swagger.components.schemas
+      ? swagger.components.schemas
+      : swagger.definitions;
+  const g = Object.keys(schemas)
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
         title: stripBrackets(definitionName),
-        properties: propertiesList(swagger.components.schemas[definitionName])
+        properties: propertiesList(schemas[definitionName])
       });
       return arr;
     }, [])
@@ -174,7 +194,7 @@ export const generator = (file: string) => {
     doc = JSON.parse(fs.readFileSync(file, "utf8"));
   }
   const options = {
-      parser: 'flow'
+    parser: "flow"
   };
   const genDoc = generate(doc);
   const result = `// @flow\n${genDoc}`;

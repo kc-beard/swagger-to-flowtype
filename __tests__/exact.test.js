@@ -10,10 +10,17 @@ jest.mock("commander", () => ({
 
 describe("generate flow types", () => {
   describe("Open API V2: with --exact", () => {
-    it.skip("should generate expected flow types from swagger.yml", () =>
+    it("should generate expected flow types from swagger.yml", () =>
       assertMatchesExpected(
         "exact/swagger.yaml",
         "exact/expected.yaml.flow.js"
+      )
+    );
+
+    it("should generate expected flow types from swagger.json", () =>
+      assertMatchesExpected(
+        "exact/swagger.json",
+        "exact/expected.json.flow.js"
       )
     );
   });
