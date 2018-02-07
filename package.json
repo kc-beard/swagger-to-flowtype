@@ -1,6 +1,6 @@
 {
   "name": "swagger-to-flowtype",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "description": "Command line tool for generating flow types from swagger",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,7 +12,12 @@
     "prepublish": "npm run build",
     "flow": "flow"
   },
-  "author": "yayoc <hi@yayoc.com> (http://yayoc.com)",
+  "author": "gnagel (https://github.com/gnagel)",
+  "contributors": [
+    "yayoc <hi@yayoc.com> (http://yayoc.com)",
+    "gnagel (https://github.com/gnagel)",
+    "kc-beard (https://github.com/kc-beard)"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
