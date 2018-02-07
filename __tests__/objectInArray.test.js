@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
-import { FlowTypeGenerator, generator } from "../src/index";
+import { FlowTypeGenerator } from "../src/index";
+import assertMatchesExpected from "./__mocks__/utils";
 
 jest.mock("commander", () => ({
   checkRequired: true,
@@ -12,32 +11,19 @@ jest.mock("commander", () => ({
 
 describe("generate flow types", () => {
   describe("Open API V2: parse objct in array", () => {
-    it.skip("should generate expected flow types", () => {
-      const file = path.join(
-        __dirname,
-        "__mocks__/objectInArray/objectInArray.swagger.yaml"
-      );
-      const expected = path.join(
-        __dirname,
-        "__mocks__/objectInArray/objectInArray.flow.js"
-      );
-      const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
-    });
+    it.skip("should generate expected flow types", () =>
+      assertMatchesExpected(
+        "objectInArray/objectInArray.swagger.yaml",
+        "objectInArray/objectInArray.flow.js"
+      )
+    );
   });
 
   describe("Open API V3: parse objct in array", () => {
-    it("should generate expected flow types", () => {
-      const file = path.join(
-        __dirname,
-        "__mocks__/objectInArray/objectInArray.swagger-v2.yaml"
-      );
-      const expected = path.join(
-        __dirname,
-        "__mocks__/objectInArray/objectInArray.flow.js"
-      );
-      const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
-    });
+    it("should generate expected flow types", () =>
+      assertMatchesExpected(
+        "objectInArray/objectInArray.swagger-v2.yaml",
+        "objectInArray/objectInArray.flow.js"
+      ));
   });
 });
